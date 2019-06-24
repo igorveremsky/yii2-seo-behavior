@@ -155,7 +155,9 @@ class SeoBehavior extends Behavior {
 	 */
 	public function saveSeoContent() {
 		$model = $this->getSeoContentModel();
-		if (!$model->is_global) {
+		$isSet = !empty($model->title) || !empty($model->h1) || !empty($model->keywords) || !empty($model->description);
+
+		if (!$model->is_global && $isSet) {
 			$model->title = $this->owner->{$this->titleAttribute};
 			$model->h1 = $this->owner->{$this->h1Attribute};
 			$model->keywords = $this->owner->{$this->keywordsAttribute};
