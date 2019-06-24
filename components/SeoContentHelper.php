@@ -37,7 +37,7 @@ class SeoContentHelper
 	{
 		$value = $model->{$modelSeoAttributeName};
 		if ($value)
-			Yii::$app->view->registerMetaTag(['name' => $metaTagKey, 'content' => $value], $metaTagKey);
+			Yii::$app->view->registerMetaTag(['name' => $metaTagKey, 'content' => SeoPatternHelper::replace($value, $model)], $metaTagKey);
 	}
 
     /**
@@ -73,7 +73,7 @@ class SeoContentHelper
     {
         $title = $model->{self::behavior($model)->titleAttribute};
         if ($title)
-            Yii::$app->view->title = $title;
+            Yii::$app->view->title = SeoPatternHelper::replace($title, $model);
     }
 
     /**
@@ -84,7 +84,7 @@ class SeoContentHelper
     public static function registerMetaTitle(Component $model)
     {
 	    $modelSeoAttributeName = self::behavior($model)->titleAttribute;
-	    self::registerSeoMetaTag($model, $modelSeoAttributeName, 'title');
+	    self::registerSeoMetaTag($model, SeoPatternHelper::replace($modelSeoAttributeName, $model), 'title');
     }
 
     /**
@@ -95,7 +95,7 @@ class SeoContentHelper
     public static function registerMetaKeywords(Component $model)
     {
 	    $modelSeoAttributeName = self::behavior($model)->keywordsAttribute;
-	    self::registerSeoMetaTag($model, $modelSeoAttributeName, 'keywords');
+	    self::registerSeoMetaTag($model, SeoPatternHelper::replace($modelSeoAttributeName, $model), 'keywords');
     }
 
     /**
@@ -106,6 +106,6 @@ class SeoContentHelper
     public static function registerMetaDescription(Component $model)
     {
     	$modelSeoAttributeName = self::behavior($model)->descriptionAttribute;
-    	self::registerSeoMetaTag($model, $modelSeoAttributeName, 'description');
+    	self::registerSeoMetaTag($model, SeoPatternHelper::replace($modelSeoAttributeName, $model), 'description');
     }
 }

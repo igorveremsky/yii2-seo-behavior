@@ -29,14 +29,9 @@ class SeoBehavior extends Behavior {
 	public $titleAttribute = 'seoTitle';
 
 	/**
-	 * @var boolean enable or disable sql queries caching
+	 * @var string Model attribute for h1
 	 */
-	public $enableSqlQueryCache = false;
-
-	/**
-	 * @var integer sql queries cache duration
-	 */
-	public $sqlQueryCacheDuration = 1209600; // 14 day
+	public $h1Attribute = 'seoH1';
 
 	/**
 	 * @var string Model attribute for keywords
@@ -47,6 +42,16 @@ class SeoBehavior extends Behavior {
 	 * @var string Model attribute for description
 	 */
 	public $descriptionAttribute = 'seoDescription';
+
+	/**
+	 * @var boolean enable or disable sql queries caching
+	 */
+	public $enableSqlQueryCache = false;
+
+	/**
+	 * @var integer sql queries cache duration
+	 */
+	public $sqlQueryCacheDuration = 1209600; // 14 day
 
 
 	public function attach($owner) {
@@ -65,7 +70,7 @@ class SeoBehavior extends Behavior {
 	 * @inheritdoc
 	 */
 	public function canGetProperty($name, $checkVars = true) {
-		if (in_array($name, [$this->titleAttribute, $this->keywordsAttribute, $this->descriptionAttribute])) {
+		if (in_array($name, [$this->titleAttribute, $this->h1Attribute, $this->keywordsAttribute, $this->descriptionAttribute])) {
 			return true;
 		}
 
@@ -83,16 +88,16 @@ class SeoBehavior extends Behavior {
 		if ($model) {
 			switch ($name) {
 				case $this->titleAttribute:
-					$result = ($this->isPropertyChanged($model, 'title')) ? $model->title :
-						SeoPatternHelper::replace($model->title, $this->owner);
+					$result = $model->title;
+					break;
+				case $this->h1Attribute:
+					$result = $model->h1;
 					break;
 				case $this->keywordsAttribute:
-					$result = ($this->isPropertyChanged($model, 'keywords')) ? $model->keywords :
-						SeoPatternHelper::replace($model->keywords, $this->owner);
+					$result = $model->keywords;
 					break;
 				case $this->descriptionAttribute:
-					$result = ($this->isPropertyChanged($model, 'description')) ? $model->description :
-						SeoPatternHelper::replace($model->description, $this->owner);
+					$result = $model->description;
 					break;
 			}
 		}
@@ -104,7 +109,7 @@ class SeoBehavior extends Behavior {
 	 * @inheritdoc
 	 */
 	public function canSetProperty($name, $checkVars = true) {
-		if (in_array($name, [$this->titleAttribute, $this->keywordsAttribute, $this->descriptionAttribute])) {
+		if (in_array($name, [$this->titleAttribute, $this->h1Attribute, $this->keywordsAttribute, $this->descriptionAttribute])) {
 			return true;
 		}
 
@@ -118,6 +123,9 @@ class SeoBehavior extends Behavior {
 		switch ($name) {
 			case $this->titleAttribute:
 				$this->getSeoContentModel()->title = $value;
+				break;
+			case $this->h1Attribute:
+				$this->getSeoContentModel()->h1 = $value;
 				break;
 			case $this->keywordsAttribute:
 				$this->getSeoContentModel()->keywords = $value;
@@ -149,6 +157,7 @@ class SeoBehavior extends Behavior {
 		$model = $this->getSeoContentModel();
 		if (!$model->is_global) {
 			$model->title = $this->owner->{$this->titleAttribute};
+			$model->h1 = $this->owner->{$this->h1Attribute};
 			$model->keywords = $this->owner->{$this->keywordsAttribute};
 			$model->description = $this->owner->{$this->descriptionAttribute};
 			$model->save();

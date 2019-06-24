@@ -13,12 +13,12 @@ class m180312_090724_add_column_is_global_to_seo_content extends Migration
     {
     	$this->addColumn('{{%seo_content}}', 'is_global', $this->boolean());
 
-	    $this->createIndex('seo_content_model_name_is_global', '{{%seo_content}}', ['model_name', 'is_global'], true);
+//	    $this->createIndex('seo_content_model_name_is_global', '{{%seo_content}}', ['model_name', 'is_global'], true);
     }
     
     public function safeDown()
     {
-    	$this->dropIndex('seo_content_model_name_is_global', '{{%seo_content}}');
+//    	$this->dropIndex('seo_content_model_name_is_global', '{{%seo_content}}');
 
 	    $this->dropColumn('{{%seo_content}}', 'is_global');
     }
