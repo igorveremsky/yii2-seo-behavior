@@ -4,6 +4,7 @@ namespace romi45\seoContent\components;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
+use yii\helpers\Url;
 
 class SeoContentHelper
 {
@@ -49,6 +50,7 @@ class SeoContentHelper
     {
         self::setTitle($model);
         self::registerAllSeoMeta($model);
+        self::registerCanonical($model);
     }
 
 	/**
@@ -107,5 +109,15 @@ class SeoContentHelper
     {
     	$modelSeoAttributeName = self::behavior($model)->descriptionAttribute;
     	self::registerSeoMetaTag($model, SeoPatternHelper::replace($modelSeoAttributeName, $model), 'description');
+    }
+
+    /**
+     * Register canonical
+     *
+     * @param Component $model
+     */
+    public static function registerCanonical(Component $model)
+    {
+	    Yii::$app->view->registerLinkTag(['rel' => 'canonical', 'href' => Url::canonical()]);
     }
 }
