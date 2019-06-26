@@ -196,6 +196,18 @@ class SeoPatternHelper {
 		return $replacedString;
 	}
 
+	/**
+	 * Function that replace patterns with theirs values in model.
+	 *
+	 * @param $propertyName
+	 * @param Model $model
+	 *
+	 * @return mixed|string
+	 */
+	public static function replaceModelProperty($propertyName, $model) {
+		return self::replace($model->{$propertyName}, $model);
+	}
+
 	/* *********************** PROTECTED FUNCTIONAL FUNCTIONS ************************** */
 
 	/**
