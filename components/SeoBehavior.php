@@ -81,7 +81,7 @@ class SeoBehavior extends Behavior {
 	 * @inheritdoc
 	 */
 	public function __get($name) {
-		$model = $this->getSeoContentModel();
+		$model = $this->getSeoContentModel(true);
 
 		$result = null;
 
@@ -155,14 +155,15 @@ class SeoBehavior extends Behavior {
 	 */
 	public function saveSeoContent() {
 		$model = $this->getSeoContentModel();
-		$isSet = !empty($model->title) || !empty($model->h1) || !empty($model->keywords) || !empty($model->description);
 
-		if (!$model->is_global && $isSet) {
+		if (!$this->getIsEqualGlobal()) {
 			$model->title = $this->owner->{$this->titleAttribute};
 			$model->h1 = $this->owner->{$this->h1Attribute};
 			$model->keywords = $this->owner->{$this->keywordsAttribute};
 			$model->description = $this->owner->{$this->descriptionAttribute};
 			$model->save();
+		} elseif (!$model->isNewRecord) {
+			$model->delete();
 		}
 	}
 
@@ -183,7 +184,7 @@ class SeoBehavior extends Behavior {
 	 *
 	 * @return SeoContent
 	 */
-	public function getSeoContentModel() {
+	public function getSeoContentModel($checkGlobal = false) {
 		if ($this->_model === null) {
 			$seoOwnModelQuery = SeoContent::find()->where([
 				'model_id' => $this->owner->getPrimaryKey(),
@@ -199,7 +200,7 @@ class SeoBehavior extends Behavior {
 
 			$seoModel = $seoOwnModelQuery->limit(1)->one();
 
-			if (empty($seoModel)) {
+			if ($checkGlobal && empty($seoModel)) {
 				$seoGlobalModelQuery = SeoContent::find()->where([
 					'model_name' => $this->owner->className(),
 					'is_global' => 1,
@@ -253,14 +254,17 @@ class SeoBehavior extends Behavior {
 	}
 
 	/**
-	 * Check is property in model was changed.
-	 *
-	 * @param ActiveRecord $model
-	 * @param $propertyName
-	 *
-	 * @return bool
+	 * @return string
 	 */
-	public function isPropertyChanged(ActiveRecord $model, $propertyName) {
-		return ArrayHelper::keyExists($propertyName, $model->dirtyAttributes);
+	public function getIsEqualGlobal()
+	{
+		return SeoContent::find()->where([
+			'model_name' => $this->owner->className(),
+			'title' => $this->owner->{$this->titleAttribute},
+			'h1' => $this->owner->{$this->h1Attribute},
+			'description' => $this->owner->{$this->descriptionAttribute},
+			'keywords' => $this->owner->{$this->keywordsAttribute},
+			'is_global' => 1,
+		])->exists();
 	}
 }
