@@ -118,6 +118,9 @@ class SeoContentHelper
      */
     public static function registerCanonical(Component $model)
     {
-	    Yii::$app->view->registerLinkTag(['rel' => 'canonical', 'href' => Url::canonical()]);
+	    Yii::$app->view->registerLinkTag([
+	    	'rel' => 'canonical',
+		    'href' => strtolower(Url::current([], true)),
+	    ]);
     }
 }
